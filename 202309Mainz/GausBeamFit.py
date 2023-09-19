@@ -20,7 +20,10 @@ def f(prm,x,y):
 
 
 def chi(prm,x,y,img):
-    return (f(prm,x,y) - img).flatten
+    d = f(prm,x,y) - img
+    d = d.flatten()
+    return d
+
 
 x = np.arange(len(img))
 y = np.arange(len(img[0]))
@@ -35,7 +38,7 @@ plt.show()
 
 
 
-init_val = (1000,1000,1000,1000,1000)
+init_val = (10000,1000,1000,1000,1000)
 prm, cov, info, msg, ier = leastsq(chi,init_val,args=(xx,yy,img),full_output=True)
 
 chi2 = np.sum(((f(prm,xx,yy)-img))**2)
@@ -44,4 +47,5 @@ for i in range(5):
     print("p{:} : {:10.5f} +- {:10.5f}".format(i,prm[i],np.sqrt(cov[i,i])))
 
 plt.imshow(img)
+plt.contour(f(prm,xx,yy))
 plt.show()
