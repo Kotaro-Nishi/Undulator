@@ -49,3 +49,21 @@ for i in range(5):
 plt.imshow(img)
 plt.contour(f(prm,xx,yy))
 plt.show()
+
+exit()
+# create
+pdf = PdfPages("test3.pdf")
+plt.figure(figsize=(8.27,11.69), dpi=600)
+
+plt.subplot(2,1,1)
+plt.plot(x,y)
+
+plt.subplot(2,1,2)
+plt.axis('off')
+
+col_width = [0.2,0.2]
+table = df.values.tolist()
+plt.table(cellText=table, colLabels=df.keys(),loc ='center',cellLoc ="center",colWidths =col_width)
+
+pdf.savefig()
+pdf.close()
