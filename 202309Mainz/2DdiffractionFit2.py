@@ -41,6 +41,7 @@ def AS2D(Z,z):
     NZ[int(N/2):int(N*3/2),int(N/2):int(N*3/2)] = Z
     plt.imshow(NZ)
     U = np.fft.fft2(NZ)
+    del NZ
     
     k_x = np.fft.fftfreq(2*N,d = D/N) * 2 * np.pi
     k_y = np.fft.fftfreq(2*N,d= D/N) * 2 * np.pi
@@ -49,6 +50,7 @@ def AS2D(Z,z):
     U_angular = np.fft.ifft2(U * np.exp(1.0j * k_z * z))
     
     I_angular = np.abs(U_angular)**2
+    del U_angular
     return I_angular[int(N/2):int(N*3/2),int(N/2):int(N*3/2)] 
 
 def resid(prm,img):
@@ -56,6 +58,7 @@ def resid(prm,img):
     Z = Pv(X,Y,prm[0],prm[2]*D/N,prm[3]*D/N,prm[4]*D/N,prm[5]*D/N)
     U = AS2D(Z,prm[1])
     res = U - img 
+    del U
     res = res.flatten()
     return res
 
