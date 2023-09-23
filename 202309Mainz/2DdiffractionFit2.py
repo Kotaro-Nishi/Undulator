@@ -21,8 +21,8 @@ img = cv2.imread(path,cv2.IMREAD_UNCHANGED).astype(float)
 
 global N,a,wl,k
 N = 2304
-wl = 405e-9  # 波長（400nm）
-D = 0.015 #サンプリング領域の大きさ
+wl = 405e-9  #wavelength
+D = 0.015 # size of sampling window
 k = 2*np.pi /wl
 
 def plane(x, y,amp,ap_x0,ap_y0,ap_rx,ap_ry):
