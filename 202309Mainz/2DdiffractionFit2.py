@@ -25,21 +25,28 @@ wl = 405e-9  #wavelength
 D = 0.015 # size of sampling window
 k = 2*np.pi /wl
 
-def plane(x, y,amp,ap_x0,ap_y0,ap_rx,ap_ry):
+global x_0,y_0,x_sigma_,y_sigma
+x_0 = 7.605
+y_0 = 7.366
+x_sigma = 11.71
+y_sigma = 11.36
+
+def circ(x, y,amp,ap_x0,ap_y0,ap_rx,ap_ry,s_0,t_0):
     #global ap_x0,ap_y0,ap_rx,ap_r
     if abs(x - ap_x0) < ap_rx and abs(y-ap_y0) < ap_ry:
-        return amp
+        r = np.sqrt(300**2 + (x - s_0)**2 + (y- t_0)**2 )
+        return amp*np.exp( 1.0j*k *r ) * np.exp(-((x-x_0)/x_sigma)**2 - ((y-y_0)/y_sigma)**2)
     else:
         return 0
 
 #X,Y = np.meshgrid(np.linspace(0,D,num = N),np.linspace(0,D,num = N))
-Pv = np.vectorize(plane)
+Pv = np.vectorize(circ)
 #Z = Pv(X, Y,ap_x0,ap_y0,ap_rx,ap_ry)
 
 def AS2D(Z,z):
     NZ = np.zeros((2*N,2*N))
     NZ[int(N/2):int(N*3/2),int(N/2):int(N*3/2)] = Z
-    plt.imshow(NZ)
+    print(NZ[2000][2000:2100])
     U = np.fft.fft2(NZ)
     del NZ
     
@@ -55,15 +62,15 @@ def AS2D(Z,z):
 
 def resid(prm,img):
     X,Y = np.meshgrid(np.linspace(0,D,num = N),np.linspace(0,D,num = N))
-    Z = Pv(X,Y,prm[0],prm[2]*D/N,prm[3]*D/N,prm[4]*D/N,prm[5]*D/N)
+    Z = Pv(X,Y,prm[0],prm[2]*D/N,prm[3]*D/N,prm[4]*D/N,prm[5]*D/N,prm[6],prm[7])
     U = AS2D(Z,prm[1])
     res = U - img 
     del U
     res = res.flatten()
     return res
 
-init_prm = (100,0.65,1140,1235,232,438)
-result = least_squares(resid,init_prm,args = [img],diff_step= (0.1,0.001,0.05,0.05,0.05,0.05), verbose=2)
+init_prm = (100,0.3,1140,1235,232,438,0,0)
+result = least_squares(resid,init_prm,args = [img],diff_step= (0.1,0.001,0.05,0.05,0.05,0.05,0.001,0.001), verbose=2)
 
 print(result)
 
