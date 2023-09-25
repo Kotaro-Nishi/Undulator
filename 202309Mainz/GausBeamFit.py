@@ -1,13 +1,14 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 import scipy
 from scipy.optimize import leastsq
 
 from matplotlib.backends.backend_pdf import PdfPages
 
-path = "LaserPHnoAp750ms0005.TIF"
+path = sys.argv[1]
 img = cv2.imread(path,cv2.IMREAD_UNCHANGED).astype(float)
 
 
@@ -53,8 +54,8 @@ px_ticklabel = np.arange(0,16,3)
 plt.subplot2grid((3,2),(0,0),colspan=2)
 plt.axis('off')
 label = ["Amplitude",r"$x_0$ [mm]",r"$y_0$ [mm]",r"$\sigma_x$ [mm]",r"$\sigma_y$ [mm]"]
-prm_format = ["{:.5f}".format(item*15/2304) for item in prm]
-cov_format = ["{:.5f}".format(np.sqrt(item)) for item in np.diag(cov)]
+prm_format = ["{:.4e}".format(item*15/2304) for item in prm]
+cov_format = ["{:.2e}".format(np.sqrt(item)*15/2304) for item in np.diag(cov)]
 table = [label,prm_format,cov_format]
 table = np.array(table).T
 col_width = [0.3,0.35,0.35]
