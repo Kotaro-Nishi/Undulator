@@ -35,18 +35,20 @@ def circ(x, y,amp,ap_x0,ap_y0,ap_rx,ap_ry,s_0,t_0):
     #global ap_x0,ap_y0,ap_rx,ap_r
     if abs(x - ap_x0) < ap_rx and abs(y-ap_y0) < ap_ry:
         r = np.sqrt(300**2 + (x - s_0)**2 + (y- t_0)**2 )
-        return amp*np.exp( 1.0j*k *r ) * np.exp(-((x-x_0)/x_sigma)**2 - ((y-y_0)/y_sigma)**2)
+        result = amp*np.exp( 1.0j*k *r ) * np.exp(-((x-x_0)/x_sigma)**2 - ((y-y_0)/y_sigma)**2)
+        return np.complex128(result)
     else:
-        return 0
+        return np.complex128(0.0)
 
 #X,Y = np.meshgrid(np.linspace(0,D,num = N),np.linspace(0,D,num = N))
 Pv = np.vectorize(circ)
 #Z = Pv(X, Y,ap_x0,ap_y0,ap_rx,ap_ry)
 
+
+
 def AS2D(Z,z):
-    NZ = np.zeros((2*N,2*N))
+    NZ = np.zeros((2*N,2*N),dtype =complex)
     NZ[int(N/2):int(N*3/2),int(N/2):int(N*3/2)] = Z
-    print(NZ[2000][2000:2100])
     U = np.fft.fft2(NZ)
     del NZ
     
@@ -61,7 +63,7 @@ def AS2D(Z,z):
     return I_angular[int(N/2):int(N*3/2),int(N/2):int(N*3/2)] 
 
 def resid(prm,img):
-    X,Y = np.meshgrid(np.linspace(0,D,num = N),np.linspace(0,D,num = N))
+    X,Y = np.meshgrid(np.linspace(0,D,num = N,dtype=complex),np.linspace(0,D,num = N,dtype=complex))
     Z = Pv(X,Y,prm[0],prm[2]*D/N,prm[3]*D/N,prm[4]*D/N,prm[5]*D/N,prm[6],prm[7])
     U = AS2D(Z,prm[1])
     res = U - img 
